@@ -5,5 +5,13 @@ evm-base-contracts/coverage
 ethereum/artifacts
 ethereum/cache
 ethereum/coverage
+tron/artifacts
+tron/cache
+tron/coverage
+tron/deployerInput*.json
+!tron/deployerInput.example.json
+.env
+.env.*
+!.env.example
 .idea
 node_modules
