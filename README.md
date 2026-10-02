@@ -13,3 +13,9 @@ This repository has the contracts that implement the wrapped tokens.
 ## Original Ethereum network
 
 [ethereum/README.md](ethereum/README.md)
+
+## Verification
+
+`Contracts CI` installs locked dependencies, compiles, tests, and audits every
+module. It also verifies that the Base and Kava WBTC wrappers remain identical
+to the tested canonical EVM contract.
