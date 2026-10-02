@@ -6,14 +6,14 @@ const HasNoEtherTest = artifacts.require('WBTC');
 
 function shouldBehaveLikeHasNoEther (accounts) {
 
-  const amount = web3.toWei('1', 'ether');
+  const amount = web3.utils.toWei('1', 'ether');
 
   it('should be constructible', async function () {
     await HasNoEtherTest.new();
   });
 
   it('should not accept ether in constructor', async function () {
-    await expectThrow(HasNoEtherTest.new({ value: amount }), "Cannot send value to non-payable constructor");
+    await expectThrow(HasNoEtherTest.new({ from: accounts[0], value: amount }));
   });
 
   it('should not accept ether', async function () {

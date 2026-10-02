@@ -1,12 +1,9 @@
-const BigNumber = web3.BigNumber
-
 const { ZEPPELIN_LOCATION , ZERO_ADDRESS} = require("../helper.js");
 const { expectThrow } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectThrow');
 const { ethSendTransaction, ethGetBalance } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/web3');
 
 require("chai")
     .use(require("chai-as-promised"))
-    .use(require('chai-bignumber')(BigNumber))
     .should()
 
 const OwnableContract = artifacts.require("./utils/OwnableContract.sol");
@@ -46,7 +43,7 @@ contract('OwnableContractOwner', function(accounts) {
         });
 
         it('should check callTransferOwnership to 0 address fails', async function () { 
-            await expectThrow(ownableContractOwner.callTransferOwnership(ownableContract.address, 0, { from }), "invalid newOwner address");
+            await expectThrow(ownableContractOwner.callTransferOwnership(ownableContract.address, ZERO_ADDRESS, { from }), "invalid newOwner address");
         });
 
         it('should check callTransferOwnership emits an event', async function () {
@@ -96,7 +93,7 @@ contract('OwnableContractOwner', function(accounts) {
         });
 
         it('should check callReclaimToken with 0 token address fails', async function () {
-            await expectThrow(ownableContractOwner.callReclaimToken(ownableContract.address, 0), "invalid _token address");
+            await expectThrow(ownableContractOwner.callReclaimToken(ownableContract.address, ZERO_ADDRESS), "invalid _token address");
         });
 
         it('should check callReclaimToken emits an event', async function () {

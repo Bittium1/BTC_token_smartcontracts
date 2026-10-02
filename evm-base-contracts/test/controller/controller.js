@@ -1,4 +1,4 @@
-const { ZEPPELIN_LOCATION } = require("../helper.js");
+const { ZEPPELIN_LOCATION, ZERO_ADDRESS } = require("../helper.js");
 const { expectThrow } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectThrow');
 
 const WBTC = artifacts.require("./token/WBTC.sol")
@@ -34,7 +34,7 @@ contract('Controller', function(accounts) {
         const from = admin;
 
         it("should create controller with 0 token address.", async function () {
-            await expectThrow(Controller.new(0), "invalid _token address");
+            await expectThrow(Controller.new(ZERO_ADDRESS), "invalid _token address");
         });
 
         it("should setMembers.", async function () {
@@ -51,7 +51,7 @@ contract('Controller', function(accounts) {
         });
 
         it("should setMembers with 0 address.", async function () {
-            await expectThrow(controller.setMembers(0), "invalid _members address");
+            await expectThrow(controller.setMembers(ZERO_ADDRESS), "invalid _members address");
         });
 
         it("should check setMembers event.", async function () {
@@ -75,7 +75,7 @@ contract('Controller', function(accounts) {
         });
 
         it("should setFactory with 0 address.", async function () {
-            await expectThrow(controller.setFactory(0), "invalid _factory address");
+            await expectThrow(controller.setFactory(ZERO_ADDRESS), "invalid _factory address");
         });
 
         it("should check setFactory event.", async function () {
@@ -190,7 +190,7 @@ contract('Controller', function(accounts) {
         });
 
         it("should mint with 0 address", async function () {
-            await expectThrow(controller.mint(0, 100, {from: factory}), "invalid to address");
+            await expectThrow(controller.mint(ZERO_ADDRESS, 100, {from: factory}), "invalid to address");
         });
 
         it("mint of token that controller does not own should fail", async function () {
@@ -226,7 +226,7 @@ contract('Controller', function(accounts) {
 
     describe('not as factory', function () {
         it("mint reverts.", async function () {
-            await expectThrow(controller.mint(admin, 100, {other}));
+            await expectThrow(controller.mint(admin, 100, {from: other}));
         });
         it("burn reverts.", async function () {
             await controller.mint(other, 100, {from: factory});

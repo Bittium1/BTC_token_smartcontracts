@@ -61,7 +61,7 @@ function shouldBehaveLikeBasicToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Transfer');
           assert.equal(logs[0].args.from, owner);
           assert.equal(logs[0].args.to, to);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value.toString(), String(amount));
         });
       });
     });

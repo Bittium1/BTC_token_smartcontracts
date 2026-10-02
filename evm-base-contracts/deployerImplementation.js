@@ -5,9 +5,11 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
     const path = require('path');
     const RLP = require('rlp');
     const BigNumber = require('bignumber.js')
-    const solc = require('solc')
 
-    const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
+    const provider = typeof rpcUrl === "string"
+        ? new Web3.providers.HttpProvider(rpcUrl)
+        : rpcUrl;
+    const web3 = new Web3(provider);
     const gasPrice = BigNumber(gasPriceGwei).times(10 ** 9);
     const signedTxs = [];
     let chainId;
@@ -18,29 +20,18 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
     let privateKeyMerchant, accountMerchant, accountMerchantAddress;
     let accountMultiSigAddress;
 
-    const controllerContractPath = path.join(__dirname, "./contracts/controller/");
-    const factoryContractPath = path.join(__dirname, "./contracts/factory/");
-    const tokenContractPath = path.join(__dirname, "./contracts/token/");
-    const utilsContractPath = path.join(__dirname, "./contracts/utils/");
-    const tokenFileName = tokenName + '.sol';
+    function loadArtifact(contractName) {
+        const artifactPath = path.join(__dirname, "build", "contracts", contractName + ".json");
+        if (!fs.existsSync(artifactPath)) {
+            throw new Error("Missing compiled artifact for " + contractName + ". Run `npm run compile` first.");
+        }
 
-    const compilationInput = {
-        "OwnableContract.sol" : fs.readFileSync(utilsContractPath + 'OwnableContract.sol', 'utf8'),
-        "OwnableContractOwner.sol" : fs.readFileSync(utilsContractPath + 'OwnableContractOwner.sol', 'utf8'),
-        "IndexedMapping.sol" : fs.readFileSync(utilsContractPath + 'IndexedMapping.sol', 'utf8'),
-        "Controller.sol" : fs.readFileSync(controllerContractPath + 'Controller.sol', 'utf8'),
-        "ControllerInterface.sol" : fs.readFileSync(controllerContractPath + 'ControllerInterface.sol', 'utf8'),
-        "Factory.sol" : fs.readFileSync(factoryContractPath + 'Factory.sol', 'utf8'),
-        "Members.sol" : fs.readFileSync(factoryContractPath + 'Members.sol', 'utf8'),
-        "MembersInterface.sol" : fs.readFileSync(factoryContractPath + 'MembersInterface.sol', 'utf8'),
-        [tokenFileName] : fs.readFileSync(tokenContractPath + tokenFileName, 'utf8')
-    };
+        const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"));
+        if (!artifact.bytecode || artifact.bytecode === "0x") {
+            throw new Error("Compiled artifact for " + contractName + " has no deployable bytecode.");
+        }
 
-    function findImports (_path) {
-        if(_path.includes("openzeppelin-solidity"))
-            return { contents: fs.readFileSync("node_modules/" + _path, 'utf8') }
-        else
-            return { contents: fs.readFileSync(path.join(__dirname, "./contracts/", _path), 'utf8') }
+        return artifact;
     }
 
     function sleep(ms){
@@ -52,9 +43,17 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
     function getKeyAndAccounts() {
 
         let content = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
-        privateKey = content["privateKey"]
-        privateKeyCustodian = content["privateKeyCustodian"]
-        privateKeyMerchant = content["privateKeyMerchant"]
+        const normalizePrivateKey = (value, fieldName) => {
+            const hex = typeof value === "string" ? value.replace(/^0x/, "") : "";
+            if (!/^[0-9a-fA-F]+$/.test(hex) || hex.length > 64) {
+                throw new Error(fieldName + " must contain at most 32 bytes of hexadecimal data");
+            }
+            return "0x" + hex.padStart(64, "0");
+        };
+
+        privateKey = normalizePrivateKey(content["privateKey"], "privateKey")
+        privateKeyCustodian = normalizePrivateKey(content["privateKeyCustodian"], "privateKeyCustodian")
+        privateKeyMerchant = normalizePrivateKey(content["privateKeyMerchant"], "privateKeyMerchant")
         accountMultiSigAddress = content["accountMultiSigAddress"]
 
         account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -106,25 +105,25 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
 
         const signedTx = await web3.eth.accounts.signTransaction(tx, txKey);
         nonce++;
-        // don't wait for confirmation
         signedTxs.push(signedTx.rawTransaction)
-        if (!dontSendTx) {
-            web3.eth.sendSignedTransaction(signedTx.rawTransaction, {from:fromAccount.address});
-        }
+        if (dontSendTx) return null;
+
+        // Wait for the receipt so dependent transactions cannot overtake deployment.
+        return web3.eth.sendSignedTransaction(signedTx.rawTransaction);
     }
 
-    async function deployContract(solcOutput, contractName, ctorArgs) {
-
-        const actualName = contractName;
-        const bytecode = solcOutput.contracts[actualName].bytecode;
-        const abi = solcOutput.contracts[actualName].interface;
-        const myContract = new web3.eth.Contract(JSON.parse(abi));
-        const deploy = myContract.deploy({data:"0x" + bytecode, arguments: ctorArgs});
+    async function deployContract(contractName, ctorArgs) {
+        const artifact = loadArtifact(contractName);
+        const myContract = new web3.eth.Contract(artifact.abi);
+        const deploy = myContract.deploy({data: artifact.bytecode, arguments: ctorArgs});
 
         let address = "0x" + web3.utils.sha3(RLP.encode([sender,nonce])).slice(12).substring(14);
         address = web3.utils.toChecksumAddress(address);
 
-        await sendTx(deploy, account);
+        const receipt = await sendTx(deploy, account);
+        if (receipt && receipt.contractAddress) {
+            address = receipt.contractAddress;
+        }
 
         myContract.options.address = address;
 
@@ -156,9 +155,9 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
         getKeyAndAccounts();
 
         /////////////////////////////////////////////////////////////
-        networkType = await web3.eth.net.getNetworkType();
-        if (networkType == "private") {
-            fundTestRpcAccounts();
+        const networkType = await web3.eth.net.getNetworkType();
+        if (networkType == "private" && !dontSendTx) {
+            await fundTestRpcAccounts();
         }
 
         /////////////////////////////////////////////////////////////
@@ -166,13 +165,8 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
         nonce = await web3.eth.getTransactionCount(sender);
         console.log("nonce",nonce);
 
-        chainId = await web3.eth.net.getId()
+        chainId = await web3.eth.getChainId()
         console.log('chainId', chainId);
-
-        console.log("starting compilation");
-        const output = await solc.compile({ sources: compilationInput }, 1, findImports);
-        console.log(output.errors);
-        console.log("finished compilation");
 
         if (!dontSendTx) {
             await waitForEth(sender);
@@ -183,20 +177,20 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
         /////////////////////////////////////////////////////////////
 
         let tokenAddress, tokenContract;
-        [tokenAddress, tokenContract] = await deployContract(output, tokenFileName + ":" + tokenName, []);
+        [tokenAddress, tokenContract] = await deployContract(tokenName, []);
         console.log("tokenAddress: " + tokenAddress);
 
         let controllerAddress, controllerContract;
-        [controllerAddress, controllerContract] = await deployContract(output, "Controller.sol:Controller", [tokenAddress]);
+        [controllerAddress, controllerContract] = await deployContract("Controller", [tokenAddress]);
         console.log("controllerAddress: " + controllerAddress)
 
         let membersAddress, membersContract;
         // set sender as owner here, can use controller in final deployment.
-        [membersAddress, membersContract] = await deployContract(output, "Members.sol:Members", [sender]);
+        [membersAddress, membersContract] = await deployContract("Members", [sender]);
         console.log("membersAddress: " + membersAddress)
 
         let factoryAddress, factoryContract;
-        [factoryAddress, factoryContract] = await deployContract(output, "Factory.sol:Factory", [controllerAddress]);
+        [factoryAddress, factoryContract] = await deployContract("Factory", [controllerAddress]);
         console.log("factoryAddress: " + factoryAddress)
 
         ////////////////////////////////////////////////////////////
@@ -244,9 +238,6 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
         await sendTx(membersContract.methods.transferOwnership(accountMultiSigAddress), account);
 
         ////////////////////////////////////////////////////////////
-
-        console.log("waiting to make sure transactions were added on chain.")
-        await sleep(20000)
 
         if (!skipAddMembers) {
           nonce = await web3.eth.getTransactionCount(accountCustodianAddress);

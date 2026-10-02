@@ -1,11 +1,8 @@
-const BigNumber = web3.BigNumber
-
-const { ZEPPELIN_LOCATION } = require("../helper.js");
+const { ZEPPELIN_LOCATION, ZERO_ADDRESS } = require("../helper.js");
 const { expectThrow } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectThrow');
 
 require("chai")
     .use(require("chai-as-promised"))
-    .use(require('chai-bignumber')(BigNumber))
     .should()
 
 const Members = artifacts.require("./factory/Members.sol");
@@ -24,7 +21,7 @@ contract('Members', function(accounts) {
     });
 
     it("create members with 0 owner address parameter fails.", async function () {
-        await expectThrow(Members.new(0), "invalid _owner address");
+        await expectThrow(Members.new(ZERO_ADDRESS), "invalid _owner address");
     });
 
     it("set a custodian.", async function () {
@@ -35,7 +32,7 @@ contract('Members', function(accounts) {
     });
 
     it("set a custodian with 0 address fails.", async function () {
-        await expectThrow(members.setCustodian(0), "invalid custodian address");
+        await expectThrow(members.setCustodian(ZERO_ADDRESS), "invalid custodian address");
     });
 
     it("set a custodian not as owner.", async function () {
@@ -54,7 +51,7 @@ contract('Members', function(accounts) {
     });
 
     it("add a merchant with 0 address fails.", async function () {
-        await expectThrow(members.addMerchant(0), "invalid merchant address");
+        await expectThrow(members.addMerchant(ZERO_ADDRESS), "invalid merchant address");
     });
 
     it("remove a merchant.", async function () {
@@ -71,7 +68,7 @@ contract('Members', function(accounts) {
     });
 
     it("remove merchant with 0 address fails.", async function () {
-        await expectThrow(members.removeMerchant(0), "invalid merchant address");
+        await expectThrow(members.removeMerchant(ZERO_ADDRESS), "invalid merchant address");
     });
 
     it("remove a merchant which was already removed.", async function () {

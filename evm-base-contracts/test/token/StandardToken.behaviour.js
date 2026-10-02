@@ -61,7 +61,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Transfer');
           assert.equal(logs[0].args.from, owner);
           assert.equal(logs[0].args.to, to);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value.toString(), String(amount));
         });
       });
     });
@@ -89,7 +89,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value.toString(), String(amount));
         });
 
         describe('when there was no approved amount before', function () {
@@ -125,7 +125,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value.toString(), String(amount));
         });
 
         describe('when there was no approved amount before', function () {
@@ -170,7 +170,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
-        assert(logs[0].args.value.eq(amount));
+        assert.equal(logs[0].args.value.toString(), String(amount));
       });
     });
   });
@@ -203,7 +203,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
             await this.token.transferFrom(owner, to, amount, { from: spender });
 
             const allowance = await this.token.allowance(owner, spender);
-            assert(allowance.eq(0));
+            assert.equal(allowance.toString(), '0');
           });
 
           it('emits a transfer event', async function () {
@@ -213,7 +213,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
             assert.equal(logs[0].event, 'Transfer');
             assert.equal(logs[0].args.from, owner);
             assert.equal(logs[0].args.to, to);
-            assert(logs[0].args.value.eq(amount));
+            assert.equal(logs[0].args.value.toString(), String(amount));
           });
         });
 
@@ -277,7 +277,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(0));
+          assert.equal(logs[0].args.value.toString(), '0');
         });
 
         describe('when there was no approved amount before', function () {
@@ -327,7 +327,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(0));
+          assert.equal(logs[0].args.value.toString(), '0');
         });
 
         describe('when there was no approved amount before', function () {
@@ -372,7 +372,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
-        assert(logs[0].args.value.eq(0));
+        assert.equal(logs[0].args.value.toString(), '0');
       });
     });
   });
@@ -391,7 +391,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value.toString(), String(amount));
         });
 
         describe('when there was no approved amount before', function () {
@@ -427,7 +427,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value.toString(), String(amount));
         });
 
         describe('when there was no approved amount before', function () {
@@ -471,7 +471,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
-        assert(logs[0].args.value.eq(amount));
+        assert.equal(logs[0].args.value.toString(), String(amount));
       });
     });
   });

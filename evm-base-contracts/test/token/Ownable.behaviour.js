@@ -31,7 +31,7 @@ function shouldBehaveLikeOwnable (accounts) {
     // since transfer ownership awaits claim, transfer to 0 address can not happen implicitly.
     it('should not revert for transferownership to 0 address', async function () {
       const originalOwner = await this.ownable.owner();
-      await this.ownable.transferOwnership(null, { from: originalOwner });
+      await this.ownable.transferOwnership(ZERO_ADDRESS, { from: originalOwner });
     });
 
     it('does not lose owner after renouncement', async function () {

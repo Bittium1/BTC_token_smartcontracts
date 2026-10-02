@@ -1,12 +1,8 @@
-const BigNumber = web3.BigNumber;
-
 const { ZEPPELIN_LOCATION, ZERO_ADDRESS } = require("../helper.js");
 const { assertRevert } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/assertRevert');
 const { inLogs } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectEvent');
 
-require('chai')
-  .use(require('chai-bignumber')(BigNumber))
-  .should();
+require('chai').should();
 
 function shouldBehaveLikeBurnableToken ([owner, anotherAccount], initialBalance) {
   describe('as a basic burnable token', function () {
@@ -23,20 +19,20 @@ function shouldBehaveLikeBurnableToken ([owner, anotherAccount], initialBalance)
 
         it('burns the requested amount', async function () {
           const balance = await this.token.balanceOf(from);
-          balance.should.be.bignumber.equal(initialBalance - amount);
+          assert.equal(balance.toString(), String(initialBalance - amount));
         });
 
         it('emits a burn event', async function () {
           const event = await inLogs(this.logs, 'Burn');
           event.args.burner.should.eq(owner);
-          event.args.value.should.be.bignumber.equal(amount);
+          assert.equal(event.args.value.toString(), String(amount));
         });
 
         it('emits a transfer event', async function () {
           const event = await inLogs(this.logs, 'Transfer');
           event.args.from.should.eq(owner);
           event.args.to.should.eq(ZERO_ADDRESS);
-          event.args.value.should.be.bignumber.equal(amount);
+          assert.equal(event.args.value.toString(), String(amount));
         });
       });
 
