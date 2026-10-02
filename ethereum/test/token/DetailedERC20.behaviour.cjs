@@ -1,8 +1,4 @@
-const BigNumber = web3.BigNumber;
-
-require('chai')
-  .use(require('chai-bignumber')(BigNumber))
-  .should();
+require('chai').should();
 
 function shouldBehaveLikeDetailedERC20 (accounts, _name, _symbol, _decimals) {
 
@@ -18,7 +14,7 @@ function shouldBehaveLikeDetailedERC20 (accounts, _name, _symbol, _decimals) {
 
   it('has an amount of decimals', async function () {
     const decimals = await this.detailedERC20.decimals();
-    decimals.should.be.bignumber.equal(_decimals);
+    assert.equal(decimals.toString(), String(_decimals));
   });
 };
 

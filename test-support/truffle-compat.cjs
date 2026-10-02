@@ -1,7 +1,10 @@
 const fs = require("node:fs");
+const { createRequire } = require("node:module");
 const path = require("node:path");
-const { HDNodeWallet } = require("ethers");
-const { utils: web3Utils } = require("web3");
+const projectRequire = createRequire(path.join(process.cwd(), "package.json"));
+const BigNumber = projectRequire("bignumber.js");
+const { HDNodeWallet } = projectRequire("ethers");
+const { utils: web3Utils } = projectRequire("web3");
 
 const TEST_MNEMONIC = "test test test test test test test test test test test junk";
 const TEST_ACCOUNTS = Array.from({ length: 20 }, (_, index) =>
@@ -135,7 +138,15 @@ function decodedLogs(receipt, contractInterface) {
 
 function normalizedArguments(fragment, args) {
   return args.map((argument, index) => {
-    const fixedBytes = /^bytes(\d+)$/.exec(fragment.inputs[index]?.type ?? "");
+    const inputType = fragment.inputs[index]?.type ?? "";
+    if (inputType === "address" && (argument === 0 || argument === null)) {
+      return "0x0000000000000000000000000000000000000000";
+    }
+
+    const fixedBytes = /^bytes(\d+)$/.exec(inputType);
+    if (fixedBytes !== null && argument === 0) {
+      return `0x${"0".repeat(Number(fixedBytes[1]) * 2)}`;
+    }
     if (fixedBytes === null || typeof argument !== "string" || !/^0x[0-9a-f]*$/i.test(argument)) {
       return argument;
     }
@@ -213,8 +224,15 @@ function truffleArtifact(reference) {
         signer,
       );
       const overrides = ethersOverrides(options);
-      const deployArgs = Object.keys(overrides).length === 0 ? args : [...args, overrides];
+      const normalizedArgs = normalizedArguments(factory.interface.deploy, args);
+      const deployArgs = Object.keys(overrides).length === 0
+        ? normalizedArgs
+        : [...normalizedArgs, overrides];
       const contract = await factory.deploy(...deployArgs);
+      const deploymentTransaction = contract.deploymentTransaction();
+      if (deploymentTransaction !== null) {
+        await deploymentTransaction.wait();
+      }
       await contract.waitForDeployment();
       return wrapContract(contract);
     },
@@ -238,9 +256,14 @@ const currentProvider = {
   },
 };
 
-global.assert = require("chai").assert;
+global.assert = projectRequire("chai").assert;
 global.contract = (name, tests) => describe(name, () => tests(TEST_ACCOUNTS));
 global.artifacts = { require: truffleArtifact };
-global.web3 = { utils: web3Utils, currentProvider };
+global.web3 = {
+  BigNumber,
+  currentProvider,
+  toWei: web3Utils.toWei,
+  utils: web3Utils,
+};
 
 module.exports = { getRuntime, TEST_ACCOUNTS };

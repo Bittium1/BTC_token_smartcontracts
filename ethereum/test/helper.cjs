@@ -7,7 +7,7 @@ async function expectThrow(promise, message) {
     if (message !== undefined) {
       assert.include(error.message, message);
     } else {
-      assert.match(error.message, /invalid opcode|out of gas|revert/i);
+      assert.match(error.message, /invalid opcode|out of gas|revert|non-payable/i);
     }
     return;
   }
@@ -49,8 +49,6 @@ async function ethGetBalance(address) {
 
 module.exports = {
   ZERO_ADDRESS: "0x0000000000000000000000000000000000000000",
-  ZERO_BYTES32: `0x${"0".repeat(64)}`,
-  UNKNOWN_BYTES32: `0x${"1".repeat(64)}`,
   EVMRevert: "revert",
   assertRevert,
   ethGetBalance,

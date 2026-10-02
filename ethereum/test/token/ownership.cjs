@@ -1,7 +1,7 @@
-const { shouldBehaveLikeOwnable } = require("./Ownable.behaviour.js")
-const { shouldBehaveLikeClaimable } = require("./Claimable.behaviour.js")
-const { shouldBehaveLikeCanReclaimToken } = require("./CanReclaimToken.behaviour.js")
-const { shouldBehaveLikeHasNoEther } = require("./HasNoEther.behaviour.js")
+const { shouldBehaveLikeOwnable } = require("./Ownable.behaviour.cjs")
+const { shouldBehaveLikeClaimable } = require("./Claimable.behaviour.cjs")
+const { shouldBehaveLikeCanReclaimToken } = require("./CanReclaimToken.behaviour.cjs")
+const { shouldBehaveLikeHasNoEther } = require("./HasNoEther.behaviour.cjs")
 
 const Token = artifacts.require("./token/WBTC.sol");
 const BasicTokenMock = artifacts.require('BasicTokenMock');

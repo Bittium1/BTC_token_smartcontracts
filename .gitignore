@@ -2,5 +2,8 @@ build
 evm-base-contracts/artifacts
 evm-base-contracts/cache
 evm-base-contracts/coverage
+ethereum/artifacts
+ethereum/cache
+ethereum/coverage
 .idea
 node_modules

@@ -1,9 +1,9 @@
-const { shouldBehaveLikeBasicToken } = require("./BasicToken.behaviour.js")
-const { shouldBehaveLikeDetailedERC20 } = require("./DetailedERC20.behaviour.js")
-const { shouldBehaveLikeStandardToken } = require("./StandardToken.behaviour.js")
-const { shouldBehaveLikeMintableToken } = require("./MintableToken.behaviour.js")
-const { shouldBehaveLikePausableToken } = require("./PausableToken.behaviour.js")
-const { shouldBehaveLikeBurnableToken } = require("./BurnableToken.behaviour.js")
+const { shouldBehaveLikeBasicToken } = require("./BasicToken.behaviour.cjs")
+const { shouldBehaveLikeDetailedERC20 } = require("./DetailedERC20.behaviour.cjs")
+const { shouldBehaveLikeStandardToken } = require("./StandardToken.behaviour.cjs")
+const { shouldBehaveLikeMintableToken } = require("./MintableToken.behaviour.cjs")
+const { shouldBehaveLikePausableToken } = require("./PausableToken.behaviour.cjs")
+const { shouldBehaveLikeBurnableToken } = require("./BurnableToken.behaviour.cjs")
 
 const Token = artifacts.require("./token/WBTC.sol");
 

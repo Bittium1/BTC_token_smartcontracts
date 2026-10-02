@@ -1,24 +1,32 @@
-This repository has the orginal contracts that implement the wrapped btc token.
-The contracts in this repo are NOT deployed. You can find the deployed contracts
-for the wrapped btc token on the Ethereum network in [ethereumV2/README.md](../ethereumV2/README.md).
+This directory preserves the original contracts that implemented the wrapped
+BTC token. These contracts are not deployed. The maintained EVM contracts are
+documented in [evm-base-contracts/README.md](../evm-base-contracts/README.md).
 
 # Installation
 
-    npm install
+Node.js 22.13 or newer is required.
+
+    npm ci
 
 # Compilation
 
-    node_modules/.bin/truffle compile
+    npm run compile
 
 # Testing
 
-    node_modules/.bin/truffle test
+    npm test
 
 # Testing Coverage
 
-    node node_modules/.bin/solidity-coverage
+    npm run coverage
 
 # Deployment
 
-    node scripts/deployer.js --input-file [file] --gas-price-gwei [gwei] --rpc-url [url]
+Compile first. Deployment is a signing-only dry run by default:
+
+    node scripts/deployer.cjs --input-file [file] --gas-price-gwei [gwei] --rpc-url [url]
+
+Broadcast requires the explicit `--send-tx` flag:
+
+    node scripts/deployer.cjs --input-file [file] --gas-price-gwei [gwei] --rpc-url [url] --send-tx
 

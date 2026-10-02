@@ -24,4 +24,10 @@ bytecode.
 
 # Deployment
 
-    node deployer.cjs --input-file [file] --gas-price-gwei [gwei] --rpc-url [url] --token-name [string] --dont-send-tx [bool] --skip-add-members [bool]
+Compile first. Deployment is a signing-only dry run by default:
+
+    node deployer.cjs --input-file [file] --gas-price-gwei [gwei] --rpc-url [url] --token-name [string] [--skip-add-members]
+
+Broadcast requires the explicit `--send-tx` flag:
+
+    node deployer.cjs --input-file [file] --gas-price-gwei [gwei] --rpc-url [url] --token-name [string] --send-tx [--skip-add-members]

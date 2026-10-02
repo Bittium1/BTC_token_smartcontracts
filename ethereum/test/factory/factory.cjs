@@ -1,11 +1,7 @@
-const BigNumber = web3.BigNumber
-
-const { ZEPPELIN_LOCATION } = require("../helper.js");
-const { expectThrow } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectThrow');
+const { expectThrow } = require("../helper.cjs");
 
 require("chai")
     .use(require("chai-as-promised"))
-    .use(require('chai-bignumber')(BigNumber))
     .should()
 
 const WBTC = artifacts.require("./token/WBTC.sol")
@@ -26,6 +22,7 @@ const REQUEST_STATUS_PENDING            = "pending"
 const REQUEST_STATUS_CANCELED           = "canceled"
 const REQUEST_STATUS_APPROVED           = "approved"
 const REQUEST_STATUS_REJECTED           = "rejected"
+const UNKNOWN_REQUEST_HASH              = "0x1212121212121212121212121212121212121212121212121212121212121212"
 
 contract('Factory', function(accounts) {
 
@@ -207,7 +204,7 @@ contract('Factory', function(accounts) {
             const { logs } = await factory.addMintRequest(amount, btcTxid0, custodianBtcDepositAddressForMerchant0, {from});
 
             const hash = logs[0].args.requestHash;
-            const alteredHash = "0x0123456789012345678901234567890123456789012345678901234567890123456789012345"
+            const alteredHash = UNKNOWN_REQUEST_HASH
 
             await expectThrow(factory.cancelMintRequest(alteredHash, {from}));
             await factory.cancelMintRequest(hash, {from})
@@ -405,7 +402,7 @@ contract('Factory', function(accounts) {
         it("confirmMintRequest with non exsting request hash", async function () {
             const tx = await factory.addMintRequest(amount, btcTxid0, custodianBtcDepositAddressForMerchant0, {from: merchant0});
             await expectThrow(
-                    factory.confirmMintRequest("hash", {from}),
+                    factory.confirmMintRequest(UNKNOWN_REQUEST_HASH, {from}),
                     "given request hash does not match a pending request"
             );
         });
@@ -496,7 +493,7 @@ contract('Factory', function(accounts) {
         it("rejectMintRequest with non exsting request hash", async function () {
             await factory.addMintRequest(amount, btcTxid0, custodianBtcDepositAddressForMerchant0, {from: merchant0});
             await expectThrow(
-                    factory.rejectMintRequest("hash", {from}),
+                    factory.rejectMintRequest(UNKNOWN_REQUEST_HASH, {from}),
                     "given request hash does not match a pending request"
             );
         });
@@ -579,7 +576,7 @@ contract('Factory', function(accounts) {
             await wbtc.approve(factory.address, amount, {from: merchant0});
             await factory.burn(amount, {from: merchant0});
             await expectThrow(
-                    factory.confirmBurnRequest("hash", btcTxid0, {from}),
+                    factory.confirmBurnRequest(UNKNOWN_REQUEST_HASH, btcTxid0, {from}),
                     "given request hash does not match a pending request"
             );
         });
@@ -652,21 +649,21 @@ contract('Factory', function(accounts) {
 
         it("confirmMintRequest reverts", async function () {
             await expectThrow(
-                factory.confirmMintRequest("hash", {from: other}),
+                factory.confirmMintRequest(UNKNOWN_REQUEST_HASH, {from: other}),
                 "sender not a custodian"
             );
         });
 
         it("rejectMintRequest reverts", async function () {
             await expectThrow(
-                factory.rejectMintRequest("hash", {from: other}),
+                factory.rejectMintRequest(UNKNOWN_REQUEST_HASH, {from: other}),
                 "sender not a custodian"
             );
         });
 
         it("confirmBurnRequest reverts", async function () {
             await expectThrow(
-                factory.confirmBurnRequest("hash", btcTxid0, {from}),
+                factory.confirmBurnRequest(UNKNOWN_REQUEST_HASH, btcTxid0, {from}),
                 "sender not a custodian"
             );
         });

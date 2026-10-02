@@ -1,5 +1,4 @@
-const { ZEPPELIN_LOCATION, ZERO_ADDRESS } = require("../helper.js");
-const { assertRevert } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/assertRevert');
+const { ZERO_ADDRESS, assertRevert } = require("../helper.cjs");
 
 function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
 
@@ -61,7 +60,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Transfer');
           assert.equal(logs[0].args.from, owner);
           assert.equal(logs[0].args.to, to);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value, amount);
         });
       });
     });
@@ -89,7 +88,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value, amount);
         });
 
         describe('when there was no approved amount before', function () {
@@ -125,7 +124,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value, amount);
         });
 
         describe('when there was no approved amount before', function () {
@@ -170,7 +169,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
-        assert(logs[0].args.value.eq(amount));
+        assert.equal(logs[0].args.value, amount);
       });
     });
   });
@@ -203,7 +202,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
             await this.token.transferFrom(owner, to, amount, { from: spender });
 
             const allowance = await this.token.allowance(owner, spender);
-            assert(allowance.eq(0));
+            assert.equal(allowance, 0);
           });
 
           it('emits a transfer event', async function () {
@@ -213,7 +212,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
             assert.equal(logs[0].event, 'Transfer');
             assert.equal(logs[0].args.from, owner);
             assert.equal(logs[0].args.to, to);
-            assert(logs[0].args.value.eq(amount));
+            assert.equal(logs[0].args.value, amount);
           });
         });
 
@@ -277,7 +276,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(0));
+          assert.equal(logs[0].args.value, 0);
         });
 
         describe('when there was no approved amount before', function () {
@@ -327,7 +326,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(0));
+          assert.equal(logs[0].args.value, 0);
         });
 
         describe('when there was no approved amount before', function () {
@@ -372,7 +371,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
-        assert(logs[0].args.value.eq(0));
+        assert.equal(logs[0].args.value, 0);
       });
     });
   });
@@ -391,7 +390,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value, amount);
         });
 
         describe('when there was no approved amount before', function () {
@@ -427,7 +426,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value, amount);
         });
 
         describe('when there was no approved amount before', function () {
@@ -471,7 +470,7 @@ function shouldBehaveLikeStandardToken ([owner, recipient, anotherAccount]) {
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
-        assert(logs[0].args.value.eq(amount));
+        assert.equal(logs[0].args.value, amount);
       });
     });
   });

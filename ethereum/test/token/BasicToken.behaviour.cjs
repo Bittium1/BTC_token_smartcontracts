@@ -1,5 +1,4 @@
-const { ZEPPELIN_LOCATION, ZERO_ADDRESS } = require("../helper.js");
-const { assertRevert } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/assertRevert');
+const { ZERO_ADDRESS, assertRevert } = require("../helper.cjs");
 
 function shouldBehaveLikeBasicToken ([owner, recipient, anotherAccount]) {
 
@@ -61,7 +60,7 @@ function shouldBehaveLikeBasicToken ([owner, recipient, anotherAccount]) {
           assert.equal(logs[0].event, 'Transfer');
           assert.equal(logs[0].args.from, owner);
           assert.equal(logs[0].args.to, to);
-          assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args.value, amount);
         });
       });
     });

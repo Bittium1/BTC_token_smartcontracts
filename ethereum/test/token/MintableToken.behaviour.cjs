@@ -1,11 +1,6 @@
-const BigNumber = web3.BigNumber;
+const { assertRevert } = require("../helper.cjs");
 
-const { ZEPPELIN_LOCATION } = require("../helper.js");
-const { assertRevert } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/assertRevert');
-
-require('chai')
-  .use(require('chai-bignumber')(BigNumber))
-  .should();
+require('chai').should();
 
 function shouldBehaveLikeMintableToken ([owner, anotherAccount, minter]) {
   describe('as a basic mintable token', function () {

@@ -1,11 +1,7 @@
-const BigNumber = web3.BigNumber
-
-const { ZEPPELIN_LOCATION } = require("../helper.js");
-const { expectThrow } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectThrow');
+const { expectThrow } = require("../helper.cjs");
 
 require("chai")
     .use(require("chai-as-promised"))
-    .use(require('chai-bignumber')(BigNumber))
     .should()
 
 const Members = artifacts.require("./factory/Members.sol");

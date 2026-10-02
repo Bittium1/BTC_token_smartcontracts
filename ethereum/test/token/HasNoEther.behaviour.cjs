@@ -1,6 +1,4 @@
-const { ZEPPELIN_LOCATION } = require("../helper.js");
-const { expectThrow } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectThrow');
-const { ethSendTransaction, ethGetBalance } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/web3');
+const { expectThrow, ethSendTransaction, ethGetBalance } = require("../helper.cjs");
 
 const HasNoEtherTest = artifacts.require('WBTC');
 
@@ -13,7 +11,7 @@ function shouldBehaveLikeHasNoEther (accounts) {
   });
 
   it('should not accept ether in constructor', async function () {
-    await expectThrow(HasNoEtherTest.new({ value: amount }), "Cannot send value to non-payable constructor");
+    await expectThrow(HasNoEtherTest.new({ value: amount }));
   });
 
   it('should not accept ether', async function () {
