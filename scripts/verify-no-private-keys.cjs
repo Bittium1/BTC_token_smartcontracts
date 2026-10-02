@@ -42,7 +42,10 @@ function scanTrackedFiles() {
 }
 
 function scanHistory() {
-  const rows = execFileSync("git", ["rev-list", "--objects", "--all"], {
+  const revisions = process.argv.includes("--heads-and-tags")
+    ? ["--branches", "--tags"]
+    : ["--all"];
+  const rows = execFileSync("git", ["rev-list", "--objects", ...revisions], {
     cwd: repositoryRoot,
     encoding: "utf8",
   }).trim().split(/\r?\n/);
