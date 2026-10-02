@@ -8,6 +8,10 @@ ethereum/coverage
 tron/artifacts
 tron/cache
 tron/coverage
+evm-base-contracts/deployerInput*.json
+!evm-base-contracts/deployerInput.example.json
+ethereum/**/deployerInput*.json
+!ethereum/scripts/deployerInput.example.json
 tron/deployerInput*.json
 !tron/deployerInput.example.json
 .env

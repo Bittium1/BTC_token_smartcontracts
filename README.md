@@ -18,4 +18,9 @@ This repository has the contracts that implement the wrapped tokens.
 
 `Contracts CI` installs locked dependencies, compiles, tests, and audits every
 module. It also verifies that the Base and Kava WBTC wrappers remain identical
-to the tested canonical EVM contract.
+to the tested canonical EVM contract and rejects tracked private-key literals.
+
+Deployment input files are ignored. Copy the relevant
+`deployerInput.example.json` file locally and populate it outside version
+control; tests derive disposable accounts in memory from Hardhat's public test
+mnemonic.

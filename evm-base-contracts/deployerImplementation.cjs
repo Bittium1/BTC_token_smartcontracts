@@ -55,8 +55,12 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
     }
 
     function getKeyAndAccounts() {
-
-        let content = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
+        const content = typeof inputFile === "string"
+            ? JSON.parse(fs.readFileSync(inputFile, "utf8"))
+            : inputFile;
+        if (content === null || typeof content !== "object") {
+            throw new Error("Deployment input must be a file path or configuration object");
+        }
         const normalizePrivateKey = (value, fieldName) => {
             const hex = typeof value === "string" ? value.replace(/^0x/, "") : "";
             if (!/^[0-9a-fA-F]+$/.test(hex) || hex.length > 64) {

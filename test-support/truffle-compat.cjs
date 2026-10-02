@@ -8,13 +8,23 @@ const { HDNodeWallet } = projectRequire("ethers");
 const { utils: web3Utils } = projectRequire("web3");
 
 const TEST_MNEMONIC = "test test test test test test test test test test test junk";
-const TEST_ACCOUNTS = Array.from({ length: 20 }, (_, index) =>
+const TEST_WALLETS = Array.from({ length: 20 }, (_, index) =>
   HDNodeWallet.fromPhrase(
     TEST_MNEMONIC,
     undefined,
     `m/44'/60'/0'/0/${index}`,
-  ).address,
+  ),
 );
+const TEST_ACCOUNTS = TEST_WALLETS.map((wallet) => wallet.address);
+
+function getTestDeployerInput() {
+  return {
+    privateKey: TEST_WALLETS[1].privateKey,
+    privateKeyCustodian: TEST_WALLETS[2].privateKey,
+    privateKeyMerchant: TEST_WALLETS[3].privateKey,
+    accountMultiSigAddress: TEST_WALLETS[4].address,
+  };
+}
 
 let runtimePromise;
 
@@ -269,4 +279,4 @@ global.web3 = {
   utils: web3Utils,
 };
 
-module.exports = { getRuntime, TEST_ACCOUNTS };
+module.exports = { getRuntime, getTestDeployerInput, TEST_ACCOUNTS };
