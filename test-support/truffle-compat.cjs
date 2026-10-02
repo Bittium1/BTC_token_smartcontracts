@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const { createRequire } = require("node:module");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 const projectRequire = createRequire(path.join(process.cwd(), "package.json"));
 const BigNumber = projectRequire("bignumber.js");
 const { HDNodeWallet } = projectRequire("ethers");
@@ -20,7 +21,9 @@ let runtimePromise;
 async function getRuntime() {
   if (runtimePromise === undefined) {
     runtimePromise = (async () => {
-      const { network } = await import("hardhat");
+      // This helper sits above each package, so resolve Hardhat from the active project.
+      const hardhatEntryPoint = projectRequire.resolve("hardhat");
+      const { network } = await import(pathToFileURL(hardhatEntryPoint).href);
       const connection = await network.create("hardhatMainnet");
       const signers = await connection.ethers.getSigners();
       const actualAccounts = await Promise.all(
