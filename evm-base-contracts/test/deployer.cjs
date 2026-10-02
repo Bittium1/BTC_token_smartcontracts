@@ -1,4 +1,5 @@
-const deployer = require("../deployerImplementation.js");
+require("../test-support/truffle-compat.cjs");
+const deployer = require("../deployerImplementation.cjs");
 
 require("chai")
     .use(require("chai-as-promised"))

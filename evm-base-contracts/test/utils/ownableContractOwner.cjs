@@ -1,6 +1,4 @@
-const { ZEPPELIN_LOCATION , ZERO_ADDRESS} = require("../helper.js");
-const { expectThrow } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectThrow');
-const { ethSendTransaction, ethGetBalance } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/web3');
+const { ZERO_ADDRESS, expectThrow, ethSendTransaction, ethGetBalance } = require("../helper.cjs");
 
 require("chai")
     .use(require("chai-as-promised"))

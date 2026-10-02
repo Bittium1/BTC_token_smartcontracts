@@ -8,5 +8,5 @@ const { inputFile, gasPriceGwei, rpcUrl, dontSendTx, tokenName, skipAddMembers }
   .boolean('dontSendTx')
   .argv;
 
-const deployer = require("./deployerImplementation.js");
+const deployer = require("./deployerImplementation.cjs");
 deployer.deploy(inputFile, gasPriceGwei, rpcUrl, dontSendTx, tokenName, skipAddMembers );

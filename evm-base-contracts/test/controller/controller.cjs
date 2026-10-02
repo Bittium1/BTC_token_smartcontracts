@@ -1,5 +1,4 @@
-const { ZEPPELIN_LOCATION, ZERO_ADDRESS } = require("../helper.js");
-const { expectThrow } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectThrow');
+const { ZERO_ADDRESS, expectThrow } = require("../helper.cjs");
 
 const WBTC = artifacts.require("./token/WBTC.sol")
 const Members = artifacts.require("./factory/Members.sol")

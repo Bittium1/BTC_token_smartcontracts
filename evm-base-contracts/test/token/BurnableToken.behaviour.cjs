@@ -1,6 +1,4 @@
-const { ZEPPELIN_LOCATION, ZERO_ADDRESS } = require("../helper.js");
-const { assertRevert } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/assertRevert');
-const { inLogs } = require(ZEPPELIN_LOCATION + 'openzeppelin-solidity/test/helpers/expectEvent');
+const { ZERO_ADDRESS, assertRevert, inLogs } = require("../helper.cjs");
 
 require('chai').should();
 

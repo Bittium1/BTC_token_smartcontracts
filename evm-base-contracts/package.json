@@ -1,12 +1,16 @@
 {
   "name": "bitcoin-token-smart-contracts",
   "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "truffle compile && truffle test --compile-none --network test",
-    "compile": "truffle compile",
-    "coverage": "solidity-coverage"
+    "test": "hardhat test mocha --network hardhatMainnet",
+    "compile": "hardhat compile",
+    "coverage": "hardhat test mocha --coverage --network hardhatMainnet"
   },
   "repository": {
     "type": "git",
@@ -19,19 +23,20 @@
   },
   "homepage": "https://github.com/KyberNetwork/bitcoin-token-smart-contracts#readme",
   "dependencies": {
-    "bignumber.js": "^7.2.1",
-    "chai": "^4.1.2",
-    "chai-as-promised": "^7.1.1",
-    "crypto-balances": "^2.1.3",
-    "find-parent-dir": "^0.3.0",
-    "ganache": "7.9.2",
+    "bignumber.js": "^9.3.1",
     "openzeppelin-solidity": "1.12.0",
-    "rlp": "^2.1.0",
-    "solc": "0.4.24",
-    "solhint": "^1.2.1",
-    "solidity-coverage": "^0.5.11",
-    "truffle": "5.11.5",
-    "web3": "^1.8.0",
-    "yargs": "^12.0.2"
+    "rlp": "^3.0.0",
+    "web3": "^4.16.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "4.2.0",
+    "@nomicfoundation/hardhat-mocha": "4.0.0",
+    "chai": "^4.5.0",
+    "chai-as-promised": "^7.1.2",
+    "ethers": "6.17.0",
+    "hardhat": "3.18.1",
+    "mocha": "12.0.3",
+    "solhint": "^6.0.1"
   }
 }

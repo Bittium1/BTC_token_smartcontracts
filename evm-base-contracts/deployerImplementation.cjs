@@ -1,6 +1,6 @@
 module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSendTx, tokenName, skipAddMembers = false) {
 
-    const Web3 = require("web3");
+    const { Web3 } = require("web3");
     const fs = require("fs");
     const path = require('path');
     const RLP = require('rlp');
@@ -10,7 +10,7 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
         ? new Web3.providers.HttpProvider(rpcUrl)
         : rpcUrl;
     const web3 = new Web3(provider);
-    const gasPrice = BigNumber(gasPriceGwei).times(10 ** 9);
+    const gasPrice = BigNumber(gasPriceGwei).times(10 ** 9).toFixed(0);
     const signedTxs = [];
     let chainId;
 
@@ -21,8 +21,22 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
     let accountMultiSigAddress;
 
     function loadArtifact(contractName) {
-        const artifactPath = path.join(__dirname, "build", "contracts", contractName + ".json");
-        if (!fs.existsSync(artifactPath)) {
+        const artifactRoot = path.join(__dirname, "artifacts", "contracts");
+        const findArtifact = directory => {
+            if (!fs.existsSync(directory)) return null;
+            for (const entry of fs.readdirSync(directory, {withFileTypes: true})) {
+                const entryPath = path.join(directory, entry.name);
+                if (entry.isDirectory()) {
+                    const nested = findArtifact(entryPath);
+                    if (nested) return nested;
+                } else if (entry.name === contractName + ".json" && !entry.name.endsWith(".dbg.json")) {
+                    return entryPath;
+                }
+            }
+            return null;
+        };
+        const artifactPath = findArtifact(artifactRoot);
+        if (artifactPath === null) {
             throw new Error("Missing compiled artifact for " + contractName + ". Run `npm run compile` first.");
         }
 
@@ -72,11 +86,15 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
     }
 
     async function sendTx(txObject, fromAccount) {
-        const txTo = txObject._parent.options.address;
+        const isDeployment = "deployData" in txObject;
+        const populatedTx = !isDeployment && typeof txObject.populateTransaction === "function"
+            ? await txObject.populateTransaction({from: fromAccount.address})
+            : null;
+        const txTo = populatedTx?.to ?? null;
 
         let gasLimit;
         try {
-            gasLimit = await txObject.estimateGas();
+            gasLimit = Number(await txObject.estimateGas());
         }
         catch (e) {
             gasLimit = 500 * 1000;
@@ -89,7 +107,7 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
         gasLimit *= 1.2;
         gasLimit -= gasLimit % 1;
 
-        const txData = txObject.encodeABI();
+        const txData = populatedTx?.data ?? txObject.encodeABI();
         const txFrom = fromAccount.address;
         const txKey = fromAccount.privateKey;
 
@@ -144,10 +162,10 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
 
     async function fundTestRpcAccounts() {
         const accounts = await web3.eth.getAccounts();
-        const amount = BigNumber(1).times(10 ** 18) // 1 eth
-        await web3.eth.sendTransaction({to: sender, from: accounts[0], value: amount});
-        await web3.eth.sendTransaction({to: accountCustodianAddress, from: accounts[0], value: amount});
-        await web3.eth.sendTransaction({to: accountMerchantAddress, from: accounts[0], value: amount});
+        const amount = BigNumber(1).times(10 ** 18).toFixed(0) // 1 eth
+        await web3.eth.sendTransaction({to: sender, from: accounts[0], value: amount, gasPrice});
+        await web3.eth.sendTransaction({to: accountCustodianAddress, from: accounts[0], value: amount, gasPrice});
+        await web3.eth.sendTransaction({to: accountMerchantAddress, from: accounts[0], value: amount, gasPrice});
     }
 
     async function main() {
@@ -155,8 +173,9 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
         getKeyAndAccounts();
 
         /////////////////////////////////////////////////////////////
-        const networkType = await web3.eth.net.getNetworkType();
-        if (networkType == "private" && !dontSendTx) {
+        const networkChainId = Number(await web3.eth.getChainId());
+        const isLocalDevelopmentNetwork = [1337, 5777, 31337].includes(networkChainId);
+        if (isLocalDevelopmentNetwork && !dontSendTx) {
             await fundTestRpcAccounts();
         }
 
@@ -165,7 +184,7 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
         nonce = await web3.eth.getTransactionCount(sender);
         console.log("nonce",nonce);
 
-        chainId = await web3.eth.getChainId()
+        chainId = networkChainId;
         console.log('chainId', chainId);
 
         if (!dontSendTx) {
@@ -287,5 +306,5 @@ module.exports.deploy = async function (inputFile, gasPriceGwei, rpcUrl, dontSen
 };
 
 if (process.argv.length < 3) {
-    console.log("usage: node deployerImplementation.js <tokenName>");
+    console.log("usage: node deployerImplementation.cjs <tokenName>");
 }
