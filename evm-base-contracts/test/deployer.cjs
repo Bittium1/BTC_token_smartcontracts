@@ -1,8 +1,11 @@
-const { getTestDeployerInput } = require("../../test-support/truffle-compat.cjs");
+const {
+    getTestDeployerInput,
+    requireProjectDependency,
+} = require("../../test-support/truffle-compat.cjs");
 const deployer = require("../deployerImplementation.cjs");
 
-require("chai")
-    .use(require("chai-as-promised"))
+requireProjectDependency("chai")
+    .use(requireProjectDependency("chai-as-promised"))
     .should()
 
 contract('Deployer', function(accounts) {

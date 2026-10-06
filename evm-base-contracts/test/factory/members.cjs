@@ -1,7 +1,7 @@
-const { ZERO_ADDRESS, expectThrow } = require("../helper.cjs");
+const { ZERO_ADDRESS, expectThrow, requireProjectDependency } = require("../helper.cjs");
 
-require("chai")
-    .use(require("chai-as-promised"))
+requireProjectDependency("chai")
+    .use(requireProjectDependency("chai-as-promised"))
     .should()
 
 const Members = artifacts.require("./factory/Members.sol");

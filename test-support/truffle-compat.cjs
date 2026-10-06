@@ -279,4 +279,9 @@ global.web3 = {
   utils: web3Utils,
 };
 
-module.exports = { getRuntime, getTestDeployerInput, TEST_ACCOUNTS };
+module.exports = {
+  getRuntime,
+  getTestDeployerInput,
+  requireProjectDependency: projectRequire,
+  TEST_ACCOUNTS,
+};

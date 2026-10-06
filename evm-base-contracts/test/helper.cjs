@@ -1,4 +1,7 @@
-const { getRuntime } = require("../../test-support/truffle-compat.cjs");
+const {
+  getRuntime,
+  requireProjectDependency,
+} = require("../../test-support/truffle-compat.cjs");
 
 async function expectThrow(promise, message) {
   try {
@@ -57,4 +60,5 @@ module.exports = {
   ethSendTransaction,
   expectThrow,
   inLogs,
+  requireProjectDependency,
 };

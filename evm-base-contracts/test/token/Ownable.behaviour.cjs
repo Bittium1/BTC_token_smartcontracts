@@ -1,6 +1,11 @@
-const { ZERO_ADDRESS, EVMRevert, expectThrow } = require("../helper.cjs");
+const {
+  ZERO_ADDRESS,
+  EVMRevert,
+  expectThrow,
+  requireProjectDependency,
+} = require("../helper.cjs");
 
-require('chai')
+requireProjectDependency('chai')
   .should();
 
 function shouldBehaveLikeOwnable (accounts) {

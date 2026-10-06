@@ -1,6 +1,6 @@
-const { ZERO_ADDRESS, assertRevert, inLogs } = require("../helper.cjs");
+const { ZERO_ADDRESS, assertRevert, inLogs, requireProjectDependency } = require("../helper.cjs");
 
-require('chai').should();
+requireProjectDependency('chai').should();
 
 function shouldBehaveLikeBurnableToken ([owner, anotherAccount], initialBalance) {
   describe('as a basic burnable token', function () {

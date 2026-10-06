@@ -1,4 +1,6 @@
-require('chai').should();
+const { requireProjectDependency } = require("../helper.cjs");
+
+requireProjectDependency('chai').should();
 
 function shouldBehaveLikeDetailedERC20 (accounts, _name, _symbol, _decimals) {
 

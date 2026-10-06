@@ -1,6 +1,6 @@
-const { assertRevert } = require("../helper.cjs");
+const { assertRevert, requireProjectDependency } = require("../helper.cjs");
 
-require('chai').should();
+requireProjectDependency('chai').should();
 
 function shouldBehaveLikeMintableToken ([owner, anotherAccount, minter]) {
   describe('as a basic mintable token', function () {

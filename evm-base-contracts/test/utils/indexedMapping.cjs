@@ -1,7 +1,7 @@
-const { expectThrow } = require("../helper.cjs");
+const { expectThrow, requireProjectDependency } = require("../helper.cjs");
 
-require("chai")
-    .use(require("chai-as-promised"))
+requireProjectDependency("chai")
+    .use(requireProjectDependency("chai-as-promised"))
     .should()
 
 const IndexedMappingWrapper = artifacts.require("./mock/IndexedMappingWrapper.sol");

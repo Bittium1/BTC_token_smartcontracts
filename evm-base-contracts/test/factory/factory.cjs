@@ -1,7 +1,13 @@
-const { ZERO_ADDRESS, ZERO_BYTES32, UNKNOWN_BYTES32, expectThrow } = require("../helper.cjs");
+const {
+    ZERO_ADDRESS,
+    ZERO_BYTES32,
+    UNKNOWN_BYTES32,
+    expectThrow,
+    requireProjectDependency,
+} = require("../helper.cjs");
 
-require("chai")
-    .use(require("chai-as-promised"))
+requireProjectDependency("chai")
+    .use(requireProjectDependency("chai-as-promised"))
     .should()
 
 const WBTC = artifacts.require("./token/WBTC.sol")

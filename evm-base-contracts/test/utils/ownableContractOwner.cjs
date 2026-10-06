@@ -1,7 +1,13 @@
-const { ZERO_ADDRESS, expectThrow, ethSendTransaction, ethGetBalance } = require("../helper.cjs");
+const {
+    ZERO_ADDRESS,
+    expectThrow,
+    ethSendTransaction,
+    ethGetBalance,
+    requireProjectDependency,
+} = require("../helper.cjs");
 
-require("chai")
-    .use(require("chai-as-promised"))
+requireProjectDependency("chai")
+    .use(requireProjectDependency("chai-as-promised"))
     .should()
 
 const OwnableContract = artifacts.require("./utils/OwnableContract.sol");
